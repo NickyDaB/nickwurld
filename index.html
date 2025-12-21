@@ -4,26 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nick Wurld</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/academic-style.css">
     <script src="scripts/copyright-year-update.js"></script>
     <script src="scripts/page-loaded.js"></script>
 </head>
 <body>
     <header>
-
+        <img id="profile_image" src="media/academic/profile_06_512.png" alt="Profile photo">
+        <h1 style="font-family: 'Merriweather', serif;">Nicholas A. Buonarota</h1>
+        <p class="tagline">Instructor · Game Developer Enthusiast · User Technologist · Mentor</p>
+        <button id="theme_toggle">Toggle Dark Mode</button>
     </header>
-    <main>
-        <!-- Main Content for the page -->
-        <h1>Welcome to Nick's Wurld. You're just logging into it.</h1>
-		<p>This is mostly here as a testing loading dock of sorts. Don't expect too much or for things to be around for too long.</p>
-		<img src="media/animated_earth.gif" alt="animated earth">
-    </main>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Teaching</a>
+        <a href="#">Projects</a>
+        <a href="#">CV</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <div class="content">
+        <h2>Welcome</h2>
+        <p>
+            Hello, and welcome to my professional academic website.
+        </p>
+        <p>
+            I'm <em>Nicholas A. Buonarota</em>, a Visiting Lecturer in the Interactive Games & Media department at Rochester Institute of Technology. 
+            I teach game development and new media-related courses, 
+            with a focus on applying game design and user experience theory to course and curriculum development.
+        </p>
+        <p>
+            Course development is one of my core strengths in higher education. 
+            Drawing on over ten years of experience in community development, research and development, and software engineering, 
+            I design learning experiences that are intentional, student-centered, and grounded in real-world practice.
+        </p>
+        <p>
+            I approach higher education through the lens of user experience design, 
+            viewing each course as an interactive system that should be <em>engaging</em>, <em>accessible</em>, and <em>meaningful</em> for students.
+        </p>
+        <p>
+            This website serves as a hub for my teaching materials, academic work, professional projects, 
+            and other resources related to my career in higher education and interactive media. 
+            In many ways, it's my character stats screen—a transparent look at my background, strengths, 
+            and the systems I use to support student learning.
+        </p>
+    </div>
     <footer>
-        <h2>Contact</h2>
-        <p>Email Nick: <a href="mailto:nickbuonarota@gmail.com">nickbuonarota@gmail.com</a></p><br>
-        <div id="main_footer">
-            <span id="copyright">Copyright &copy; <b>20XX</b></span>
-        </div>
+        © 2025 Nicholas A. Buonarota · Interactive Games & Media · Rochester Institute of Technology
     </footer>
+    <!-- Move this when I do my tidy JS pass of page -->
+    <script>
+        const toggle = document.getElementById('theme_toggle');
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+        });
+    </script>
 </body>
 </html>
