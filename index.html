@@ -4,28 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nick Wurld</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Styles -->
     <link rel="stylesheet" href="css/academic-style.css">
+    <!-- Scripts -->
     <script src="scripts/copyright-year-update.js"></script>
+    <script src="scripts/dark-mode.js"></script>
     <script src="scripts/page-loaded.js"></script>
 </head>
 <body>
     <header>
         <img id="profile_image" src="media/academic/profile_06_512.png" alt="Profile photo">
-        <h1 style="font-family: 'Merriweather', serif;">Nicholas A. Buonarota</h1>
+        <h1>Nicholas A. Buonarota</h1>
         <p class="tagline">Instructor · Game Developer Enthusiast · User Technologist · Mentor</p>
-        <button id="theme_toggle">Toggle Dark Mode</button>
+        <button id="theme_toggle" class="theme-toggle">Toggle Dark Mode</button>
     </header>
 
     <nav>
-        <a href="#">Home</a>
+        <a href="index.html">Home</a>
         <a href="#">About</a>
-        <a href="#">Teaching</a>
+        <a href="teaching.html">Teaching</a>
         <a href="#">Projects</a>
         <a href="#">CV</a>
         <a href="#">Contact</a>
     </nav>
 
-    <div class="content">
+    <main class="content">
         <h2>Welcome</h2>
         <p>
             Hello, and welcome to my professional academic website.
@@ -50,16 +55,10 @@
             In many ways, it's my character stats screen—a transparent look at my background, strengths, 
             and the systems I use to support student learning.
         </p>
-    </div>
+    </main>
+    
     <footer>
         © 2025 Nicholas A. Buonarota · Interactive Games & Media · Rochester Institute of Technology
     </footer>
-    <!-- Move this when I do my tidy JS pass of page -->
-    <script>
-        const toggle = document.getElementById('theme_toggle');
-        toggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark');
-        });
-    </script>
 </body>
 </html>

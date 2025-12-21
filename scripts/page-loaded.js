@@ -1,5 +1,6 @@
 window.onload = pageLoadedInit;
 
 function pageLoadedInit(){
-	copyrightInit();
+	//copyrightInit();
+	darkmodeInit();
 }

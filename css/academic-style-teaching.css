@@ -1,0 +1,10 @@
+.course-images {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.course-images img{
+    padding: 10px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4);
+}
