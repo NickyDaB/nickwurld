@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nick Wurld - Food Journal</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="css/food_journal_style.css">
+    <script src="../scripts/copyright-year-update.js"></script>
+    <script src="../scripts/page-loaded.js"></script>
+    <!--Food Journal Specific Scripts-->
+    <script src="scripts/food-script-main.js" defer></script>
+    <script src="scripts/page-loaded.js" defer></script>
+</head>
+<body>
+    <header>
+        <h2>NAV</h2>
+        <ul>
+            <li><a href="../index.html">Return to main</a></li>
+        </ul>
+    </header>
+    <main>
+        <!-- Main Content for the page -->
+        <h1 id="pageTitle">Food Journal.</h1>
+		<p>This is a work in progress page for the food journal.</p>
+        <p>Track meals, notes, and nutrition categories.</p>
+
+        <section id="loginSection" class="user-select-section">
+            <h2>Who is using the food journal?</h2>
+            <p>Choose a user to load their personal journal.</p>
+
+            <div class="user-button-grid">
+                <button type="button" class="user-button" data-user="Nick">Nick</button>
+                <button type="button" class="user-button" data-user="Sam">Sam</button>
+            </div>
+        </section>
+
+        <h2>Entries</h2>
+        <p>Words and stuff.</p>
+
+        <section id="journalSection" hidden>
+            <div class="journal-toolbar">
+                <h2 id="journalHeading">Entries</h2>
+                <button type="button" id="switchUserButton" class="secondary-button">Switch User</button>
+            </div>
+        
+            <section class="entry-form-section">
+                <h2>New Meal Entry</h2>
+
+                <form id="mealForm">
+                    <label>
+                    Meal Photo
+                    <input type="file" id="mealPhoto" accept="image/*" required />
+                    </label>
+
+                    <label>
+                    Notes
+                    <textarea id="mealNotes" rows="4" placeholder="What did you eat? How was it?" required></textarea>
+                    </label>
+
+                    <div class="number-grid">
+                    <label>
+                        Protein
+                        <input type="number" id="protein" min="0" step="1" value="0" />
+                    </label>
+
+                    <label>
+                        Veggies
+                        <input type="number" id="veggies" min="0" step="1" value="0" />
+                    </label>
+
+                    <label>
+                        Carbs
+                        <input type="number" id="carbs" min="0" step="1" value="0" />
+                    </label>
+
+                    <label>
+                        Fats
+                        <input type="number" id="fats" min="0" step="1" value="0" />
+                    </label>
+                    </div>
+
+                    <button type="submit">Save Meal</button>
+                </form>
+            </section>
+
+            <section class="entries-section">
+                <h2>Previous Meals</h2>
+                <div id="mealEntries" class="entries-grid"></div>
+            </section>
+        </section>
+    </main>
+    <footer>
+        <h2>Contact</h2>
+        <p>Email Nick: <a href="mailto:nickbuonarota@gmail.com">nickbuonarota@gmail.com</a></p><br>
+        <div id="main_footer">
+            <span id="copyright">Copyright &copy; <b>20XX</b></span>
+        </div>
+    </footer>
+</body>
+</html>

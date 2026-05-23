@@ -1,0 +1,186 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f6f3ee;
+  color: #222;
+}
+
+.page {
+  width: min(1000px, 92%);
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+header {
+  margin-bottom: 2rem;
+}
+
+h1, h2 {
+  margin-bottom: 0.5rem;
+}
+
+.entry-form-section,
+.entries-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: bold;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.number-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.2rem;
+  background: #222;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #444;
+}
+
+.entries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+}
+
+.meal-card {
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fffdf9;
+}
+
+.meal-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.meal-card-content {
+  padding: 1rem;
+}
+
+.meal-date {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.meal-notes {
+  margin-bottom: 0.75rem;
+}
+
+.meal-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.delete-button {
+  margin-top: 1rem;
+  background: #9d2f2f;
+  width: 100%;
+}
+
+.delete-button:hover {
+  background: #7d2020;
+}
+
+.empty-message {
+  color: #666;
+  font-style: italic;
+}
+
+@media (max-width: 650px) {
+  .number-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.user-select-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.user-button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.user-button {
+  min-width: 120px;
+}
+
+.journal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.secondary-button {
+  background: #666;
+}
+
+.secondary-button:hover {
+  background: #444;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 650px) {
+  .journal-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
