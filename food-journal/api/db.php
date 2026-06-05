@@ -1,6 +1,6 @@
-// Shared database helper functions used by all API endpoints.
-
 <?php
+
+// Shared database helper functions used by all API endpoints.
 
 require_once 'db-config.php';
 

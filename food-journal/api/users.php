@@ -1,7 +1,7 @@
+<?php
+
 // Endpoint: GET /api/users.php
 // Returns all available food journal users.
-
-<?php
 
 require_once 'db.php';
 

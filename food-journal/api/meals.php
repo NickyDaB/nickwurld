@@ -1,9 +1,9 @@
+<?php
+
 // Endpoint: /api/meals.php
 // GET    - Load meals for a user
 // POST   - Create a new meal with uploaded photo
 // DELETE - Delete a meal and its photo
-
-<?php
 
 require_once 'db.php';
 
