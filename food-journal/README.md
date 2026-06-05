@@ -1,3 +1,5 @@
+README Last Updated: 06/05/2026
+
 # Food Journal
 
 I decided to build a web based interface for a food journal.
