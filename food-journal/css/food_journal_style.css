@@ -1,3 +1,14 @@
+/* ==============================
+   Base / Reset
+============================== */
+
+/* CSS Variables */
+/* For ease of standardization */
+:root {
+  --color-bg: #f6f3ee;
+  --color-text: #222;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -5,14 +16,8 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #f6f3ee;
-  color: #222;
-}
-
-.page {
-  width: min(1000px, 92%);
-  margin: 0 auto;
-  padding: 2rem 0;
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
 header {
@@ -23,13 +28,23 @@ h1, h2 {
   margin-bottom: 0.5rem;
 }
 
-.entry-form-section,
-.entries-section {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.2rem;
+  background: #222;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #444;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 form {
@@ -57,30 +72,35 @@ textarea {
   border-radius: 10px;
 }
 
-.number-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
+/* ==============================
+   General Custom Classes
+============================== */
+
+.page {
+  width: min(1000px, 92%);
+  margin: 0 auto;
+  padding: 2rem 0;
 }
 
-button {
-  border: none;
-  border-radius: 999px;
-  padding: 0.85rem 1.2rem;
-  background: #222;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover {
-  background: #444;
+.entry-form-section,
+.entries-section {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
 }
 
 .entries-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 1rem;
+}
+
+.number-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
 }
 
 .meal-card {
@@ -133,23 +153,6 @@ button:hover {
   font-style: italic;
 }
 
-@media (max-width: 650px) {
-  .number-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.user-button-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.user-button {
-  min-width: 120px;
-}
-
 .journal-toolbar {
   display: flex;
   align-items: center;
@@ -162,11 +165,6 @@ button:hover {
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
 }
 
-#activeUserLabel {
-  margin: 0;
-  font-weight: bold;
-}
-
 .status-message {
   color: #666;
   font-style: italic;
@@ -177,21 +175,9 @@ button:hover {
   font-weight: bold;
 }
 
-@media (max-width: 650px) {
-  .journal-toolbar {
-    align-items: stretch;
-    flex-direction: column;
-  }
-}
-
 .upload-status {
   min-height: 1.25rem;
   margin: 0;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: wait;
 }
 
 .toolbar-actions {
@@ -214,6 +200,8 @@ button:disabled {
   z-index: 1000;
 }
 
+/* Required because .meal-form-overlay uses display: grid;
+   without this, the hidden attribute can be overridden. */
 .meal-form-overlay[hidden] {
   display: none;
 }
@@ -237,4 +225,45 @@ button:disabled {
 
 .secondary-button {
   background: #666;
+}
+
+/* Stuff for selecting different users
+- TODO: Will be updated when user refactor happens
+*/
+.user-button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.user-button {
+  min-width: 120px;
+}
+
+/* ==============================
+   General Custom IDs
+============================== */
+
+/* Stuff for selecting different users
+- TODO: Will be updated when user refactor happens
+*/
+
+#activeUserLabel {
+  margin: 0;
+  font-weight: bold;
+}
+
+/* ==============================
+   Responsive Styles
+============================== */
+@media (max-width: 650px) {
+  .number-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .journal-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
