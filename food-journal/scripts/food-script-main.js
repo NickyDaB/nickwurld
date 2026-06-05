@@ -1,7 +1,21 @@
 /* Food Journal - database/API version */
 
+// # VARIABLES - ==============================================
+
+// ========================================
+// Configuration
+// ========================================
 const API_BASE = "api";
 
+// ========================================
+// Application State
+// ========================================
+let currentUser = null;
+let entries = [];
+
+// ========================================
+// Cached DOM Elements
+// ========================================
 let mealForm;
 let mealEntries;
 let userButtons;
@@ -17,9 +31,13 @@ let openMealFormButton;
 let closeMealFormButton;
 let mealFormOverlay;
 
-let currentUser = null;
-let entries = [];
+// # FUNCTIONS - ==============================================
 
+
+// Function to run to set up page
+// run when we get "in it" lol
+// aka - initialize
+// Cache DOM elements, attach event listeners, and load selectable users. etc etc
 function indexInit() {
   mealForm = document.getElementById("mealForm");
   mealEntries = document.getElementById("mealEntries");
@@ -49,6 +67,8 @@ function setStatus(message, isError = false) {
   mealEntries.innerHTML = `<p class="${isError ? "error-message" : "status-message"}">${message}</p>`;
 }
 
+// Shared wrapper for API requests.
+// Converts JSON responses and throws useful errors for failed requests.
 async function apiFetch(url, options = {}) {
   const response = await fetch(url, options);
   const data = await response.json().catch(() => null);
@@ -61,6 +81,7 @@ async function apiFetch(url, options = {}) {
   return data;
 }
 
+// Load available journal users from the database.
 async function loadUsers() {
   userButtons.innerHTML = `<p class="status-message">Loading users...</p>`;
 
@@ -86,6 +107,7 @@ function renderUserButtons(users) {
   });
 }
 
+// Set the active user and load that user's meal entries.
 async function selectUser(userId, userName) {
   currentUser = {
     id: Number(userId),
@@ -111,6 +133,8 @@ function switchUser() {
   resetNumberFields();
 }
 
+// Load meals for the active user.
+// cacheBust prevents the browser from reusing stale API responses.
 async function loadEntries() {
   if (!currentUser) return;
 
@@ -119,12 +143,14 @@ async function loadEntries() {
   try {
     const url = `${API_BASE}/meals.php?user_id=${currentUser.id}&cacheBust=${Date.now()}`;
 
-    console.log("Loading meals from:", url);
+    // Debug logs
+    // TODO: Review and remove? - 06/05/26
+    // console.log("Loading meals from:", url);
 
     entries = await apiFetch(url);
 
-    console.log("Entries returned from API:", entries);
-    console.log("Is entries an array?", Array.isArray(entries));
+    //console.log("Entries returned from API:", entries);
+    //console.log("Is entries an array?", Array.isArray(entries));
 
     renderEntries();
   } catch (error) {
@@ -133,6 +159,7 @@ async function loadEntries() {
   }
 }
 
+// Render the in-memory entries array as meal cards.
 function renderEntries() {
   mealEntries.innerHTML = "";
 
@@ -141,7 +168,9 @@ function renderEntries() {
     return;
   }
 
-  console.log("Entries: " + entries.length);
+  // Debug logs
+  // TODO: Review and remove? - 06/05/26
+  // console.log("Entries: " + entries.length);
 
   entries.forEach((entry) => {
     const card = document.createElement("article");
@@ -170,6 +199,7 @@ function renderEntries() {
   });
 }
 
+// Upload a new meal entry, then refresh the meal list.
 async function logEntry(event) {
   event.preventDefault();
 
@@ -221,6 +251,7 @@ async function logEntry(event) {
   }
 }
 
+// Delete a meal from the database and refresh the meal list.
 async function deleteMeal(entryId) {
   if (!confirm("Delete this meal?")) return;
 
@@ -242,6 +273,7 @@ function resetNumberFields() {
   document.getElementById("fats").value = 0;
 }
 
+// Escape user-entered text before inserting it into card HTML.
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
