@@ -1,4 +1,10 @@
+// Endpoint: /api/meals.php
+// GET    - Load meals for a user
+// POST   - Create a new meal with uploaded photo
+// DELETE - Delete a meal and its photo
+
 <?php
+
 require_once 'db.php';
 
 header("Content-Type: application/json");
@@ -10,6 +16,7 @@ header("Expires: 0");
 $db = get_db_connection();
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Load meals for one user.
 if ($method === 'GET') {
     $user_id = filter_input(INPUT_GET, 'user_id', FILTER_VALIDATE_INT);
 
@@ -29,6 +36,7 @@ if ($method === 'GET') {
     send_json($stmt->fetchAll());
 }
 
+// Create a new meal entry and save the uploaded photo.
 if ($method === 'POST') {
     $user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
     $notes = trim($_POST['notes'] ?? '');
@@ -84,6 +92,7 @@ if ($method === 'POST') {
     send_json(['success' => true, 'id' => $db->lastInsertId()], 201);
 }
 
+// Delete a meal record and remove its uploaded photo file.
 if ($method === 'DELETE') {
     $meal_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 

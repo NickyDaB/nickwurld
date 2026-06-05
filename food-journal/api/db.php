@@ -1,7 +1,12 @@
+// Shared database helper functions used by all API endpoints.
+
 <?php
 
 require_once 'db-config.php';
 
+/**
+ * Create or reuse a PDO database connection for the current request.
+ */
 function get_db_connection() {
     global $db_host, $db_name, $db_user, $db_pass;
 
@@ -45,7 +50,7 @@ function get_db_connection() {
 }
 
 /**
- * Send a JSON response and immediately stop execution.
+ * Send a JSON response and immediately stop script execution.
  */
 function send_json($data, $status_code = 200) {
     http_response_code($status_code);
