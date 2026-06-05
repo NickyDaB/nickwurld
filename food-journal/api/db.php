@@ -1,27 +1,52 @@
 <?php
-//Replace with credentials and do not track!
-$DB_HOST = "YOUR_HOSTNAME_HERE";   // e.g. mysql.yourdomain.com (DreamHost shows this)
-$DB_NAME = "YOUR_DB_NAME_HERE";
-$DB_USER = "YOUR_DB_USER_HERE";
-$DB_PASS = "YOUR_DB_PASSWORD_HERE";
+
+require_once 'db-config.php';
 
 function get_db_connection() {
     global $db_host, $db_name, $db_user, $db_pass;
 
+    //Create a PDO (PHP Data Object) - This object represents an active connection to the database.
+    //Static variables persist between function calls during the current PHP request.
+    // aka - not recreated every time the function runs.
+    static $pdo = null;
+
+    //So if there is already a connection and info, then exit early
+    if ($pdo !== null) {
+        return $pdo;
+    }
+    //If not, then we will try to connect
+
+    // dsn - Data Source Name
+    // Describes how PDO should connect to the database.
     $dsn = "mysql:host=$db_host;dbname=$db_name;charset=utf8mb4";
 
     try {
-        return new PDO($dsn, $db_user, $db_pass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+        $pdo = new PDO(
+            $dsn,
+            $db_user,
+            $db_pass,
+            [
+                // Configure PDO behavior:
+                // - Throw exceptions when database errors occur.
+                // - Return query results as associative arrays.
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            ]
+        );
+
+        return $pdo;
     } catch (PDOException $error) {
+        // Return a generic error to the client.
+        // Avoid exposing database credentials or connection details.
         http_response_code(500);
         echo json_encode(['error' => 'Database connection failed.']);
         exit;
     }
 }
 
+/**
+ * Send a JSON response and immediately stop execution.
+ */
 function send_json($data, $status_code = 200) {
     http_response_code($status_code);
     header('Content-Type: application/json');
