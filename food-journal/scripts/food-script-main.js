@@ -19,7 +19,7 @@ let entries = [];
 let mealForm;
 let mealEntries;
 let userButtons;
-let userSelectSection;
+let userLoginSection;
 let journalSection;
 let journalTitle;
 let activeUserLabel;
@@ -30,6 +30,9 @@ let uploadStatus;
 let openMealFormButton;
 let closeMealFormButton;
 let mealFormOverlay;
+let loginForm;
+let usernameInput;
+let loginStatus;
 
 // # FUNCTIONS - ==============================================
 
@@ -41,8 +44,7 @@ let mealFormOverlay;
 function indexInit() {
   mealForm = document.getElementById("mealForm");
   mealEntries = document.getElementById("mealEntries");
-  userButtons = document.getElementById("userButtons");
-  userSelectSection = document.getElementById("userSelectSection");
+  userLoginSection = document.getElementById("userLoginSection");
   journalSection = document.getElementById("journalSection");
   journalTitle = document.getElementById("journalTitle");
   activeUserLabel = document.getElementById("activeUserLabel");
@@ -53,9 +55,11 @@ function indexInit() {
   openMealFormButton = document.getElementById("openMealFormButton");
   closeMealFormButton = document.getElementById("closeMealFormButton");
   mealFormOverlay = document.getElementById("mealFormOverlay");
+  loginForm = document.getElementById("loginForm");
+  usernameInput = document.getElementById("usernameInput");
+  loginStatus = document.getElementById("loginStatus");
 
   setUpListeners();
-  loadUsers();
 }
 
 function setUploadStatus(message, isError = false) {
@@ -81,30 +85,35 @@ async function apiFetch(url, options = {}) {
   return data;
 }
 
-// Load available journal users from the database.
-async function loadUsers() {
-  userButtons.innerHTML = `<p class="status-message">Loading users...</p>`;
+// Login and show journal
+async function loadJournal(event)
+{
+  event.preventDefault();
 
-  try {
-    const users = await apiFetch(`${API_BASE}/users.php`);
-    renderUserButtons(users);
-  } catch (error) {
-    userButtons.innerHTML = `<p class="error-message">Could not load users: ${error.message}</p>`;
+  const username = usernameInput.value.trim();
+
+  if(!username)
+  {
+    loginStatus.textContent = "Please enter a username.";
+    return;
   }
-}
 
-function renderUserButtons(users) {
-  userButtons.innerHTML = "";
+  loginStatus.textContent = "Loading journal...";
 
-  users.forEach((user) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "user-button";
-    button.textContent = user.name;
-    button.dataset.userId = user.id;
-    button.dataset.userName = user.name;
-    userButtons.appendChild(button);
-  });
+  try
+  {
+    const user = await apiFetch(
+      `${API_BASE}/users.php?username=${encodeURIComponent(username)}`
+    );
+
+    loginStatus.textContent = "";
+
+    await selectUser(user.id, user.name);
+  }
+  catch (error)
+  {
+    loginStatus.textContent = error.message;
+  }
 }
 
 // Set the active user and load that user's meal entries.
@@ -114,7 +123,7 @@ async function selectUser(userId, userName) {
     name: userName
   };
 
-  userSelectSection.hidden = true;
+  userLoginSection.hidden = true;
   journalSection.hidden = false;
   journalTitle.textContent = `${currentUser.name}'s Food Journal`;
   activeUserLabel.textContent = `Currently viewing: ${currentUser.name}`;
@@ -128,7 +137,7 @@ function switchUser() {
 
   journalTitle.textContent = "Food Journal.";
   journalSection.hidden = true;
-  userSelectSection.hidden = false;
+  userLoginSection.hidden = false;
   mealForm.reset();
   resetNumberFields();
 }
@@ -284,13 +293,9 @@ function escapeHtml(value) {
 }
 
 function setUpListeners() {
+  loginForm.addEventListener("submit", loadJournal);
+
   mealForm.addEventListener("submit", logEntry);
-
-  userButtons.addEventListener("click", function (event) {
-    if (!event.target.classList.contains("user-button")) return;
-
-    selectUser(event.target.dataset.userId, event.target.dataset.userName);
-  });
 
   switchUserButton.addEventListener("click", switchUser);
 

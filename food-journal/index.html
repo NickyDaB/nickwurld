@@ -26,10 +26,32 @@
         <p>This is a work in progress page for the food journal.</p>
         <p>Track meals, notes, and nutrition categories.</p>
 
-        <section id="userSelectSection" class="entry-form-section">
-            <h2>Who is using the food journal?</h2>
-            <p>Choose a user to load their journal.</p>
-            <div id="userButtons" class="user-button-grid"></div>
+        <section id="userLoginSection" class="entry-form-section">
+            <h2>Food Journal Log-In</h2>
+            <p>Enter your login credentials and access your food journal.</p>
+            <form id="loginForm" class="login-form">
+                <!--  ask about this action later - - action="/action_page.php"> -->
+                <label for="username">Username:</label>
+                <input type="text" id="usernameInput" name="username" autocomplete="username" required>
+                <!-- 
+                <label for="password">Password:</label>
+                <input type="text" id="password" name="password"> 
+                -->
+                <!-- Should we include the submit value here? Seperate it out into a seperate thing?-->
+                <!-- 
+                <input type="submit" value="Submit"> 
+                -->
+                <button type="submit">Log In</button>
+                <!-- Potentially display a status message for user feedback here. -->
+                <p id="loginStatus" class="status-message"></p>
+            </form>
+            <!-- 
+                I think the following needs to be cleaned up a bit. 
+                It's left over from the old "login" system to test and get the program up and running fast.
+             -->
+             <!--
+                <div id="userButtons" class="user-button-grid"></div> 
+            -->
         </section>
 
         <section id="journalSection" hidden>

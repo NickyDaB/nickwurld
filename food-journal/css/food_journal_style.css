@@ -227,18 +227,14 @@ textarea {
   background: #666;
 }
 
-/* Stuff for selecting different users
-- TODO: Will be updated when user refactor happens
-*/
-.user-button-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
+/* ==============================
+   Login Form - custom classes
+============================== */
 
-.user-button {
-  min-width: 120px;
+.login-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 400px;
 }
 
 /* ==============================
