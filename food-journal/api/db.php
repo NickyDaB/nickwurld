@@ -39,6 +39,9 @@ function get_db_connection() {
             ]
         );
 
+        // Keep all database timestamps consistent and timezone-neutral.
+        $pdo->exec("SET time_zone = '+00:00'");
+
         return $pdo;
     } catch (PDOException $error) {
         // Return a generic error to the client.

@@ -12,6 +12,12 @@ error_reporting(E_ALL);
 
 require_once 'db.php';
 
+header("Content-Type: application/json");
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: 0");
+
 $db = get_db_connection();
 
 // This endpoint only supports GET requests.
@@ -30,7 +36,7 @@ $username = trim($_GET['username'] ?? '');
 if($username !== '')
 {
     $stmt = $db->prepare('
-        SELECT id, name
+        SELECT id, name, timezone
         FROM users
         WHERE name = ?
         LIMIT 1

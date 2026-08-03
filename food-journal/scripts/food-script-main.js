@@ -103,12 +103,12 @@ async function loadJournal(event)
   try
   {
     const user = await apiFetch(
-      `${API_BASE}/users.php?username=${encodeURIComponent(username)}`
+      `${API_BASE}/users.php?username=${encodeURIComponent(username)}&cacheBust=${Date.now()}`
     );
 
     loginStatus.textContent = "";
 
-    await selectUser(user.id, user.name);
+    await selectUser(user);
   }
   catch (error)
   {
@@ -117,10 +117,11 @@ async function loadJournal(event)
 }
 
 // Set the active user and load that user's meal entries.
-async function selectUser(userId, userName) {
+async function selectUser(user) {
   currentUser = {
-    id: Number(userId),
-    name: userName
+    id: user.id,
+    name: user.name,
+    timezone: user.timezone
   };
 
   userLoginSection.hidden = true;
@@ -182,6 +183,7 @@ function renderEntries() {
   // console.log("Entries: " + entries.length);
 
   entries.forEach((entry) => {
+
     const card = document.createElement("article");
     card.className = "meal-card";
 
@@ -189,7 +191,7 @@ function renderEntries() {
       <img src="${entry.photo_path}" alt="Meal photo">
 
       <div class="meal-card-content">
-        <div class="meal-date">${entry.created_at}</div>
+        <div class="meal-date">${formatMealDate(entry.created_at)}</div>
 
         <p class="meal-notes">${escapeHtml(entry.notes)}</p>
 
@@ -319,4 +321,19 @@ function closeMealForm() {
   mealForm.reset();
   resetNumberFields();
   setUploadStatus("");
+}
+
+// Convert a UTC meal timestamp into the active user's timezone.
+function formatMealDate(utcTimestamp) {
+  if (!utcTimestamp) {
+    return "Unknown date";
+  }
+
+  const timezone = currentUser?.timezone || "UTC";
+
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(new Date(utcTimestamp));
 }

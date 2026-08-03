@@ -26,7 +26,7 @@ if ($method === 'GET') {
 
     $stmt = $db->prepare('
         SELECT id, user_id, photo_path, notes, protein, veggies, carbs, fats,
-               DATE_FORMAT(created_at, "%b %e, %Y %l:%i %p") AS created_at
+               DATE_FORMAT(created_at, "%Y-%m-%dT%H:%i:%sZ") AS created_at
         FROM meals
         WHERE user_id = ?
         ORDER BY id DESC
