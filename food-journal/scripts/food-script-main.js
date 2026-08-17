@@ -20,6 +20,8 @@ let entries = [];
 let mealForm;
 let mealFormTitle;
 let mealEntries;
+let mealPhotoInput;
+let mealPhotoField;
 let userButtons;
 let userLoginSection;
 let journalSection;
@@ -48,6 +50,8 @@ function indexInit() {
   mealForm = document.getElementById("mealForm");
   mealFormTitle = document.getElementById("mealFormTitle");
   mealEntries = document.getElementById("mealEntries");
+  mealPhotoInput = document.getElementById("mealPhoto");
+  mealPhotoField = document.getElementById("mealPhotoField");
   userLoginSection = document.getElementById("userLoginSection");
   journalSection = document.getElementById("journalSection");
   journalTitle = document.getElementById("journalTitle");
@@ -80,7 +84,54 @@ async function apiFetch(url, options = {}) {
   return data;
 }
 
+async function createMeal(){
+  const photoInput = document.getElementById("mealPhoto");
+  const file = photoInput.files[0];
+
+  if (!file) {
+    alert("Please choose a meal photo.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("user_id", currentUser.id);
+  formData.append("photo", file);
+  formData.append("notes", document.getElementById("mealNotes").value);
+  formData.append("protein", document.getElementById("protein").value || 0);
+  formData.append("veggies", document.getElementById("veggies").value || 0);
+  formData.append("carbs", document.getElementById("carbs").value || 0);
+  formData.append("fats", document.getElementById("fats").value || 0);
+
+  saveMealButton.disabled = true;
+  saveMealButton.textContent = "Uploading Meal...";
+  setUploadStatus("Uploading entry...");
+
+  try {
+    await apiFetch(`${API_BASE}/meals.php`, {
+      method: "POST",
+      body: formData
+    });
+
+    mealForm.reset();
+    resetNumberFields();
+    await loadEntries();
+    setUploadStatus("Meal uploaded successfully!");
+
+    setTimeout(() => {
+      closeMealForm();
+    }, 1000);
+  } catch (error) {
+    setUploadStatus(`Could not save meal: ${error.message}`, true);
+  } finally {
+    saveMealButton.disabled = false;
+    saveMealButton.textContent = "Save Meal";
+  }
+}
+
 function closeMealForm() {
+  //clear the "editing" state
+  editingMealId = null;
+
   mealFormOverlay.hidden = true;
   mealForm.reset();
   resetNumberFields();
@@ -113,13 +164,17 @@ function editMeal(entryId) {
 
   editingMealId = Number(entryId);
 
+  //gather existing information
   document.getElementById("mealNotes").value = meal.notes;
   document.getElementById("protein").value = meal.protein;
   document.getElementById("veggies").value = meal.veggies;
   document.getElementById("carbs").value = meal.carbs;
   document.getElementById("fats").value = meal.fats;
 
-  //UI - context update
+  // UI - context update
+  // don't require the photo for an update
+  mealPhotoField.hidden = true;
+  mealPhotoInput.required = false;
   //For more user friendly information
   mealFormTitle.textContent = "Edit Meal";
   saveMealButton.textContent = "Save Changes";
@@ -218,47 +273,13 @@ async function logEntry(event) {
     return;
   }
 
-  const photoInput = document.getElementById("mealPhoto");
-  const file = photoInput.files[0];
-
-  if (!file) {
-    alert("Please choose a meal photo.");
-    return;
+  if (editingMealId === null) {
+    await createMeal();
+  } else {
+    await updateMeal(editingMealId);
   }
 
-  const formData = new FormData();
-  formData.append("user_id", currentUser.id);
-  formData.append("photo", file);
-  formData.append("notes", document.getElementById("mealNotes").value);
-  formData.append("protein", document.getElementById("protein").value || 0);
-  formData.append("veggies", document.getElementById("veggies").value || 0);
-  formData.append("carbs", document.getElementById("carbs").value || 0);
-  formData.append("fats", document.getElementById("fats").value || 0);
-
-  saveMealButton.disabled = true;
-  saveMealButton.textContent = "Uploading Meal...";
-  setUploadStatus("Uploading entry...");
-
-  try {
-    await apiFetch(`${API_BASE}/meals.php`, {
-      method: "POST",
-      body: formData
-    });
-
-    mealForm.reset();
-    resetNumberFields();
-    await loadEntries();
-    setUploadStatus("Meal uploaded successfully!");
-
-    setTimeout(() => {
-      closeMealForm();
-    }, 1000);
-  } catch (error) {
-    setUploadStatus(`Could not save meal: ${error.message}`, true);
-  } finally {
-    saveMealButton.disabled = false;
-    saveMealButton.textContent = "Save Meal";
-  }
+  
 }
 
 function openMealForm() {
@@ -267,6 +288,10 @@ function openMealForm() {
   //UI related
   mealFormTitle.textContent = "New Meal Entry";
   saveMealButton.textContent = "Save Meal";
+
+  //Have UI require the photo for an new meal
+  mealPhotoField.hidden = false;
+  mealPhotoInput.required = true;
 
   //Show the form
   mealForm.reset();
@@ -395,4 +420,45 @@ function switchUser() {
   userLoginSection.hidden = false;
   mealForm.reset();
   resetNumberFields();
+}
+
+async function updateMeal(entryId){
+  const mealData = {
+    id: Number(entryId),
+    user_id: currentUser.id,
+    notes: document.getElementById("mealNotes").value,
+    protein: Number(document.getElementById("protein").value || 0),
+    veggies: Number(document.getElementById("veggies").value || 0),
+    carbs: Number(document.getElementById("carbs").value || 0),
+    fats: Number(document.getElementById("fats").value || 0)
+  };
+
+  saveMealButton.disabled = true;
+  saveMealButton.textContent = "Saving Changes...";
+  setUploadStatus("Updating meal...");
+
+  try {
+    await apiFetch(`${API_BASE}/meals.php`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(mealData)
+    });
+
+    await loadEntries();
+
+    setUploadStatus("Meal updated successfully!");
+
+    setTimeout(() => {
+      closeMealForm();
+    }, 1000);
+
+  } catch (error) {
+    setUploadStatus(`Could not update meal: ${error.message}`, true);
+
+  } finally {
+    saveMealButton.disabled = false;
+    saveMealButton.textContent = "Save Changes";
+  }
 }

@@ -86,6 +86,90 @@ if ($method === 'POST') {
     send_json(['success' => true, 'id' => $db->lastInsertId()], 201);
 }
 
+// Update an existing meal entry.
+if ($method === 'PATCH') {
+
+    // PATCH data does not automatically populate $_POST,
+    // so read and decode the raw JSON request body.
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!is_array($data)) {
+        send_json(['error' => 'Invalid request data.'], 400);
+    }
+
+    $meal_id = filter_var($data['id'] ?? null, FILTER_VALIDATE_INT);
+    $user_id = filter_var($data['user_id'] ?? null, FILTER_VALIDATE_INT);
+
+    $notes = trim($data['notes'] ?? '');
+
+    $protein = filter_var($data['protein'] ?? 0, FILTER_VALIDATE_INT);
+    $veggies = filter_var($data['veggies'] ?? 0, FILTER_VALIDATE_INT);
+    $carbs = filter_var($data['carbs'] ?? 0, FILTER_VALIDATE_INT);
+    $fats = filter_var($data['fats'] ?? 0, FILTER_VALIDATE_INT);
+
+    if (!$meal_id || !$user_id || $notes === '') {
+        send_json(['error' => 'Missing required meal information.'], 400);
+    }
+
+    //See if the meal that wants to be edited is owned by the correct user
+    $check = $db->prepare('
+        SELECT id
+        FROM meals
+        WHERE id = ?
+        AND user_id = ?
+    ');
+
+    $check->execute([
+        $meal_id,
+        $user_id
+    ]);
+
+    // Wrong user / nonexistent meal
+    if (!$check->fetch()) {
+        send_json([
+            'error' => 'Meal not found for this user.'
+        ], 404);
+    }
+
+    // Prevent one user from editing another user's meal.
+    // by clarifying user_id
+    $stmt = $db->prepare('
+        UPDATE meals
+        SET notes = ?,
+            protein = ?,
+            veggies = ?,
+            carbs = ?,
+            fats = ?
+        WHERE id = ?
+          AND user_id = ?
+    ');
+
+    $stmt->execute([
+        $notes,
+        $protein,
+        $veggies,
+        $carbs,
+        $fats,
+        $meal_id,
+        $user_id
+    ]);
+
+    // Valid meal, values unchanged
+    if ($stmt->rowCount() === 0) {
+        send_json([
+            'success' => true,
+            'id' => $meal_id,
+            'message' => 'No changes were necessary.'
+        ]);
+    }
+
+    // Valid meal, values changed
+    send_json([
+        'success' => true,
+        'id' => $meal_id
+    ]);
+}
+
 // Delete a meal record and remove its uploaded photo file.
 if ($method === 'DELETE') {
     $meal_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);

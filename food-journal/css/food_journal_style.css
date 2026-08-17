@@ -260,6 +260,10 @@ textarea {
   font-weight: bold;
 }
 
+#mealPhotoField[hidden] {
+  display: none;
+}
+
 /* ==============================
    Responsive Styles
 ============================== */
