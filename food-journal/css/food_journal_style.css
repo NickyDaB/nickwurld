@@ -138,9 +138,19 @@ textarea {
   font-size: 0.9rem;
 }
 
-.delete-button {
+.edit-button {
+  background: #666;
   margin-top: 1rem;
+  width: 100%;
+}
+
+.edit-button:hover {
+  background: #555;
+}
+
+.delete-button {
   background: #9d2f2f;
+  margin-top: 1rem;
   width: 100%;
 }
 

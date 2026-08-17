@@ -11,12 +11,14 @@ const API_BASE = "api";
 // Application State
 // ========================================
 let currentUser = null;
+let editingMealId = null;
 let entries = [];
 
 // ========================================
 // Cached DOM Elements
 // ========================================
 let mealForm;
+let mealFormTitle;
 let mealEntries;
 let userButtons;
 let userLoginSection;
@@ -35,6 +37,7 @@ let usernameInput;
 let loginStatus;
 
 // # FUNCTIONS - ==============================================
+// functions are in alphabetical order (except for indexInit() - which we place as a sticky top function)
 
 
 // Function to run to set up page
@@ -43,6 +46,7 @@ let loginStatus;
 // Cache DOM elements, attach event listeners, and load selectable users. etc etc
 function indexInit() {
   mealForm = document.getElementById("mealForm");
+  mealFormTitle = document.getElementById("mealFormTitle");
   mealEntries = document.getElementById("mealEntries");
   userLoginSection = document.getElementById("userLoginSection");
   journalSection = document.getElementById("journalSection");
@@ -62,15 +66,6 @@ function indexInit() {
   setUpListeners();
 }
 
-function setUploadStatus(message, isError = false) {
-  uploadStatus.textContent = message;
-  uploadStatus.className = isError ? "upload-status error-message" : "upload-status status-message";
-}
-
-function setStatus(message, isError = false) {
-  mealEntries.innerHTML = `<p class="${isError ? "error-message" : "status-message"}">${message}</p>`;
-}
-
 // Shared wrapper for API requests.
 // Converts JSON responses and throws useful errors for failed requests.
 async function apiFetch(url, options = {}) {
@@ -83,6 +78,104 @@ async function apiFetch(url, options = {}) {
   }
 
   return data;
+}
+
+function closeMealForm() {
+  mealFormOverlay.hidden = true;
+  mealForm.reset();
+  resetNumberFields();
+  setUploadStatus("");
+}
+
+// Delete a meal from the database and refresh the meal list.
+async function deleteMeal(entryId) {
+  if (!confirm("Delete this meal?")) return;
+
+  try {
+    await apiFetch(`${API_BASE}/meals.php?id=${entryId}`, {
+      method: "DELETE"
+    });
+
+    await loadEntries();
+  } catch (error) {
+    alert(`Could not delete meal: ${error.message}`);
+  }
+}
+
+function editMeal(entryId) {
+  
+  const meal = entries.find((entry) => Number(entry.id) === Number(entryId));
+
+  if (!meal) {
+    console.error("Could not find meal:", entryId);
+    return;
+  }
+
+  editingMealId = Number(entryId);
+
+  document.getElementById("mealNotes").value = meal.notes;
+  document.getElementById("protein").value = meal.protein;
+  document.getElementById("veggies").value = meal.veggies;
+  document.getElementById("carbs").value = meal.carbs;
+  document.getElementById("fats").value = meal.fats;
+
+  //UI - context update
+  //For more user friendly information
+  mealFormTitle.textContent = "Edit Meal";
+  saveMealButton.textContent = "Save Changes";
+
+  showMealForm();
+}
+
+// Escape user-entered text before inserting it into card HTML.
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+// Convert a UTC meal timestamp into the active user's timezone.
+function formatMealDate(utcTimestamp) {
+  if (!utcTimestamp) {
+    return "Unknown date";
+  }
+
+  const timezone = currentUser?.timezone || "UTC";
+
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    dateStyle: "medium",
+    timeStyle: "short"
+  }).format(new Date(utcTimestamp));
+}
+
+// Load meals for the active user.
+// cacheBust prevents the browser from reusing stale API responses.
+async function loadEntries() {
+  if (!currentUser) return;
+
+  setStatus("Loading meals...");
+
+  try {
+    const url = `${API_BASE}/meals.php?user_id=${currentUser.id}`;
+
+    // Debug logs
+    // TODO: Review and remove? - 06/05/26
+    // console.log("Loading meals from:", url);
+
+    entries = await apiFetch(url);
+
+    //console.log("Entries returned from API:", entries);
+    //console.log("Is entries an array?", Array.isArray(entries));
+
+    renderEntries();
+  } catch (error) {
+    console.error("loadEntries failed:", error);
+    setStatus(`Could not load meals: ${error.message}`, true);
+  }
 }
 
 // Login and show journal
@@ -114,100 +207,6 @@ async function loadJournal(event)
   {
     loginStatus.textContent = error.message;
   }
-}
-
-// Set the active user and load that user's meal entries.
-async function selectUser(user) {
-  currentUser = {
-    id: user.id,
-    name: user.name,
-    timezone: user.timezone
-  };
-
-  userLoginSection.hidden = true;
-  journalSection.hidden = false;
-  journalTitle.textContent = `${currentUser.name}'s Food Journal`;
-  activeUserLabel.textContent = `Currently viewing: ${currentUser.name}`;
-
-  await loadEntries();
-}
-
-function switchUser() {
-  currentUser = null;
-  entries = [];
-
-  journalTitle.textContent = "Food Journal.";
-  journalSection.hidden = true;
-  userLoginSection.hidden = false;
-  mealForm.reset();
-  resetNumberFields();
-}
-
-// Load meals for the active user.
-// cacheBust prevents the browser from reusing stale API responses.
-async function loadEntries() {
-  if (!currentUser) return;
-
-  setStatus("Loading meals...");
-
-  try {
-    const url = `${API_BASE}/meals.php?user_id=${currentUser.id}`;
-
-    // Debug logs
-    // TODO: Review and remove? - 06/05/26
-    // console.log("Loading meals from:", url);
-
-    entries = await apiFetch(url);
-
-    //console.log("Entries returned from API:", entries);
-    //console.log("Is entries an array?", Array.isArray(entries));
-
-    renderEntries();
-  } catch (error) {
-    console.error("loadEntries failed:", error);
-    setStatus(`Could not load meals: ${error.message}`, true);
-  }
-}
-
-// Render the in-memory entries array as meal cards.
-function renderEntries() {
-  mealEntries.innerHTML = "";
-
-  if (entries.length === 0) {
-    mealEntries.innerHTML = `<p class="empty-message">No meals saved yet.</p>`;
-    return;
-  }
-
-  // Debug logs
-  // TODO: Review and remove? - 06/05/26
-  // console.log("Entries: " + entries.length);
-
-  entries.forEach((entry) => {
-
-    const card = document.createElement("article");
-    card.className = "meal-card";
-
-    card.innerHTML = `
-      <img src="${entry.photo_path}" alt="Meal photo">
-
-      <div class="meal-card-content">
-        <div class="meal-date">${formatMealDate(entry.created_at)}</div>
-
-        <p class="meal-notes">${escapeHtml(entry.notes)}</p>
-
-        <div class="meal-stats">
-          <span><strong>Protein:</strong> ${entry.protein}</span>
-          <span><strong>Veggies:</strong> ${entry.veggies}</span>
-          <span><strong>Carbs:</strong> ${entry.carbs}</span>
-          <span><strong>Fats:</strong> ${entry.fats}</span>
-        </div>
-
-        <button class="delete-button" data-id="${entry.id}">Delete</button>
-      </div>
-    `;
-
-    mealEntries.appendChild(card);
-  });
 }
 
 // Upload a new meal entry, then refresh the meal list.
@@ -262,19 +261,60 @@ async function logEntry(event) {
   }
 }
 
-// Delete a meal from the database and refresh the meal list.
-async function deleteMeal(entryId) {
-  if (!confirm("Delete this meal?")) return;
+function openMealForm() {
+  //Before opening the form - update and set some data
+  editingMealId = null;
+  //UI related
+  mealFormTitle.textContent = "New Meal Entry";
+  saveMealButton.textContent = "Save Meal";
 
-  try {
-    await apiFetch(`${API_BASE}/meals.php?id=${entryId}`, {
-      method: "DELETE"
-    });
+  //Show the form
+  mealForm.reset();
+  resetNumberFields();
 
-    await loadEntries();
-  } catch (error) {
-    alert(`Could not delete meal: ${error.message}`);
+  showMealForm();
+}
+
+// Render the in-memory entries array as meal cards.
+function renderEntries() {
+  mealEntries.innerHTML = "";
+
+  if (entries.length === 0) {
+    mealEntries.innerHTML = `<p class="empty-message">No meals saved yet.</p>`;
+    return;
   }
+
+  // Debug logs
+  // TODO: Review and remove? - 06/05/26
+  // console.log("Entries: " + entries.length);
+
+  entries.forEach((entry) => {
+
+    const card = document.createElement("article");
+    card.className = "meal-card";
+
+    card.innerHTML = `
+      <img src="${entry.photo_path}" alt="Meal photo">
+
+      <div class="meal-card-content">
+        <div class="meal-date">${formatMealDate(entry.created_at)}</div>
+
+        <p class="meal-notes">${escapeHtml(entry.notes)}</p>
+
+        <div class="meal-stats">
+          <span><strong>Protein:</strong> ${entry.protein}</span>
+          <span><strong>Veggies:</strong> ${entry.veggies}</span>
+          <span><strong>Carbs:</strong> ${entry.carbs}</span>
+          <span><strong>Fats:</strong> ${entry.fats}</span>
+        </div>
+
+        <button class="edit-button" data-id="${entry.id}">Edit</button>
+        <button class="delete-button" data-id="${entry.id}">Delete</button>
+      </div>
+    `;
+
+    mealEntries.appendChild(card);
+  });
 }
 
 function resetNumberFields() {
@@ -284,14 +324,29 @@ function resetNumberFields() {
   document.getElementById("fats").value = 0;
 }
 
-// Escape user-entered text before inserting it into card HTML.
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+function showMealForm() {
+  mealFormOverlay.hidden = false;
+  setUploadStatus("");
+}
+
+// Set the active user and load that user's meal entries.
+async function selectUser(user) {
+  currentUser = {
+    id: user.id,
+    name: user.name,
+    timezone: user.timezone
+  };
+
+  userLoginSection.hidden = true;
+  journalSection.hidden = false;
+  journalTitle.textContent = `${currentUser.name}'s Food Journal`;
+  activeUserLabel.textContent = `Currently viewing: ${currentUser.name}`;
+
+  await loadEntries();
+}
+
+function setStatus(message, isError = false) {
+  mealEntries.innerHTML = `<p class="${isError ? "error-message" : "status-message"}">${message}</p>`;
 }
 
 function setUpListeners() {
@@ -302,38 +357,42 @@ function setUpListeners() {
   switchUserButton.addEventListener("click", switchUser);
 
   mealEntries.addEventListener("click", function (event) {
-    if (!event.target.classList.contains("delete-button")) return;
 
-    deleteMeal(event.target.dataset.id);
+
+    const entryId = event.target.dataset.id;
+
+    if (event.target.classList.contains("edit-button")) {
+      console.log("Editing meal:", entryId);
+      editMeal(entryId);
+      console.log("Edited meal:", entryId);
+      return;
+    }
+
+    if (event.target.classList.contains("delete-button")){
+      //console.log("deleting meal:", entryId);
+      deleteMeal(entryId);
+      //console.log("deleted meal:", entryId);
+      return;
+    }
+
   });
 
   openMealFormButton.addEventListener("click", openMealForm);
   closeMealFormButton.addEventListener("click", closeMealForm);
 }
 
-function openMealForm() {
-  mealFormOverlay.hidden = false;
-  setUploadStatus("");
+function setUploadStatus(message, isError = false) {
+  uploadStatus.textContent = message;
+  uploadStatus.className = isError ? "upload-status error-message" : "upload-status status-message";
 }
 
-function closeMealForm() {
-  mealFormOverlay.hidden = true;
+function switchUser() {
+  currentUser = null;
+  entries = [];
+
+  journalTitle.textContent = "Food Journal.";
+  journalSection.hidden = true;
+  userLoginSection.hidden = false;
   mealForm.reset();
   resetNumberFields();
-  setUploadStatus("");
-}
-
-// Convert a UTC meal timestamp into the active user's timezone.
-function formatMealDate(utcTimestamp) {
-  if (!utcTimestamp) {
-    return "Unknown date";
-  }
-
-  const timezone = currentUser?.timezone || "UTC";
-
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: timezone,
-    dateStyle: "medium",
-    timeStyle: "short"
-  }).format(new Date(utcTimestamp));
 }
