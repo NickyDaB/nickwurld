@@ -319,18 +319,28 @@ function renderEntries() {
     card.className = "meal-card";
 
     card.innerHTML = `
+      <h3>Meal X</h3>
+
       <img src="${entry.photo_path}" alt="Meal photo">
 
       <div class="meal-card-content">
-        <div class="meal-date">${formatMealDate(entry.created_at)}</div>
+        <div class="meal-date">
+          ${formatMealDate(entry.created_at)}
+        </div>
 
-        <p class="meal-notes">${escapeHtml(entry.notes)}</p>
+        <div>
+          <h4>Notes</h4>
+          <p class="meal-notes">${escapeHtml(entry.notes)}</p>
+        </div>
 
-        <div class="meal-stats">
-          <span><strong>Protein:</strong> ${entry.protein}</span>
-          <span><strong>Veggies:</strong> ${entry.veggies}</span>
-          <span><strong>Carbs:</strong> ${entry.carbs}</span>
-          <span><strong>Fats:</strong> ${entry.fats}</span>
+        <div>
+          <h4>Macros</h4>
+          <div class="meal-stats">
+            <span><strong>Protein:</strong> ${entry.protein}</span>
+            <span><strong>Veggies:</strong> ${entry.veggies}</span>
+            <span><strong>Carbs:</strong> ${entry.carbs}</span>
+            <span><strong>Fats:</strong> ${entry.fats}</span>
+          </div>
         </div>
 
         <button class="edit-button" data-id="${entry.id}">Edit</button>

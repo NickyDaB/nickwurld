@@ -70,36 +70,40 @@
                     
                     <form id="mealForm">
                         <label id="mealPhotoField">
-                            Meal Photo
+                            <h3>Meal Photo</h3>
                             <input type="file" id="mealPhoto" name="photo" accept="image/*" required>
                         </label>
 
                         <label>
-                            Notes
+                            <h3>Notes</h3>
                             <textarea id="mealNotes" name="notes" rows="4" placeholder="What did you eat? How was it?" required></textarea>
                         </label>
 
-                        <div class="number-grid">
-                            <label>
-                                Protein
-                                <input type="number" id="protein" name="protein" min="0" step="1" value="0">
-                            </label>
+                        <div id="macrosArea">
+                            <h3>Macros</h3>
+                            <div class="number-grid">
+                                <label>
+                                    Protein
+                                    <input type="number" id="protein" name="protein" min="0" step="1" value="0">
+                                </label>
 
-                            <label>
-                                Veggies
-                                <input type="number" id="veggies" name="veggies" min="0" step="1" value="0">
-                            </label>
+                                <label>
+                                    Veggies
+                                    <input type="number" id="veggies" name="veggies" min="0" step="1" value="0">
+                                </label>
 
-                            <label>
-                                Carbs
-                                <input type="number" id="carbs" name="carbs" min="0" step="1" value="0">
-                            </label>
+                                <label>
+                                    Carbs
+                                    <input type="number" id="carbs" name="carbs" min="0" step="1" value="0">
+                                </label>
 
-                            <label>
-                                Fats
-                                <input type="number" id="fats" name="fats" min="0" step="1" value="0">
-                            </label>
+                                <label>
+                                    Fats
+                                    <input type="number" id="fats" name="fats" min="0" step="1" value="0">
+                                </label>
+                            </div>
                         </div>
+                        
 
                         <button type="submit" id="saveMealButton">Save Meal</button>
                         <p id="uploadStatus" class="upload-status" aria-live="polite"></p>
