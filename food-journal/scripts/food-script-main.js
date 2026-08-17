@@ -387,16 +387,16 @@ function setUpListeners() {
     const entryId = event.target.dataset.id;
 
     if (event.target.classList.contains("edit-button")) {
-      console.log("Editing meal:", entryId);
+      console.debug("Editing meal:", entryId);
       editMeal(entryId);
-      console.log("Edited meal:", entryId);
+      console.debug("Edited meal:", entryId);
       return;
     }
 
     if (event.target.classList.contains("delete-button")){
-      //console.log("deleting meal:", entryId);
+      console.debug("deleting meal:", entryId);
       deleteMeal(entryId);
-      //console.log("deleted meal:", entryId);
+      console.debug("deleted meal:", entryId);
       return;
     }
 
