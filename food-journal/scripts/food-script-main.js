@@ -103,7 +103,7 @@ async function loadJournal(event)
   try
   {
     const user = await apiFetch(
-      `${API_BASE}/users.php?username=${encodeURIComponent(username)}&cacheBust=${Date.now()}`
+      `${API_BASE}/users.php?username=${encodeURIComponent(username)}`
     );
 
     loginStatus.textContent = "";
@@ -151,7 +151,7 @@ async function loadEntries() {
   setStatus("Loading meals...");
 
   try {
-    const url = `${API_BASE}/meals.php?user_id=${currentUser.id}&cacheBust=${Date.now()}`;
+    const url = `${API_BASE}/meals.php?user_id=${currentUser.id}`;
 
     // Debug logs
     // TODO: Review and remove? - 06/05/26
