@@ -138,6 +138,17 @@ textarea {
   font-size: 0.9rem;
 }
 
+.meal-title-area{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.meal-title{
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .edit-button {
   background: #666;
   margin-top: 1rem;

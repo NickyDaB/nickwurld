@@ -319,7 +319,9 @@ function renderEntries() {
     card.className = "meal-card";
 
     card.innerHTML = `
-      <h3>Meal X</h3>
+      <div class="meal-title-area">
+        <h3 class="meal-title">Entry X</h3>
+      </div>
 
       <img src="${entry.photo_path}" alt="Meal photo">
 
