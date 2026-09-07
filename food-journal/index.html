@@ -116,9 +116,18 @@
                 <h3>Weekly Goals</h3>
                 <p>Exceed Days: 1, Met Days: 5, Failed Days: 1</p>
                 <h3>Daily Goals</h3>
-                <p>6P, 6V, 0C, 0F</p>
+                <p><em>Coach Notes: We want to hit these numbers! But if you are off by 1 or 2, then it is ok. 
+                    If you are significantly off, then that is bad. 
+                    For protein and veggies, it is better to be slightly off in the positive direction. 
+                    For carbs and fats, it is better to be slightly off in the negative direction. 
+                    Hitting your numbers exactly will help you reach your overall nutrition and fitness goals!
+                </em></p>
+                <p>6P, 6-8V, 6C, 7F [HARD CODE]</p>
+                <p><span id="dailyProteinGoal">--</span>P, 6-8V, 6C, 7F [Variable CODE]</p>
+                <!-- <p>Protein Goal: <span id="dailyProteinGoal">--</span></p> -->
                 <h3>Individual Meal Goals</h3>
-                <p>2P, 2V, 0C, 0F</p>
+                <p><em>Coach Notes: Based off your daily goals, with 3 meals a day, if you can have each meal hit these numbers, then you'll probably meet your daily goals!</em></p>
+                <p>1-2P, 1-2V, 1-2C, 1 or 2 F [HARD CODE]</p>
             </section>
 
             <section class="stats-section">
@@ -127,10 +136,73 @@
                 <p>Exceed: 2 Days</p>
                 <p>Met: 2 Days</p>
                 <p>Failed: 1 Day</p>
+                <p>--</p>
+                <p>Happy - GREEN - Met goals exactly: 1 Days</p>
+                <p>Meh - Yellow - close: 2 Days</p>
+                <p>Sad - Red - off day: 1 Days</p>
+                <ul>
+                    <li>Monday: Sad</li>
+                        <ul>
+                            <li>Protein: <span>3</span> / <span>6</span> - missed target by significant</li>
+                            <li>Veggies: <span>5</span> / <span>6-8</span> - missed target by 1</li>
+                            <li>Carbs: <span>3</span> / <span>6</span> - missed target by significant</li>
+                            <li>Fats: <span>7</span> / <span>7</span> - hit target</li>
+                        </ul>
+                    <li>Tuesday: Happy</li>
+                        <ul>
+                            <li>Protein: <span>6</span> / <span>6</span> - hit target</li>
+                            <li>Veggies: <span>6</span> / <span>6-8</span> - hit target</li>
+                            <li>Carbs: <span>6</span> / <span>6</span> - hit target</li>
+                            <li>Fats: <span>5</span> / <span>7</span> - missed target by 2 (but under, so ok for fats)</li>
+                        </ul>
+                    <li>Wednesday: Meh</li>
+                        <ul>
+                            <li>Protein: <span>4</span> / <span>6</span> - missed target by 2</li>
+                            <li>Veggies: <span>4</span> / <span>6-8</span> - missed target by 2</li>
+                            <li>Carbs: <span>5</span> / <span>6</span> - missed target by 1 (but under, so ok for carbs)</li>
+                            <li>Fats: <span>5</span> / <span>7</span> - missed target by 2 (but under, so ok for fats)</li>
+                        </ul>
+                    <li>Thursday: Meh</li>
+                        <ul>
+                            <li>Protein: <span>5</span> / <span>6</span> - missed target by 1</li>
+                            <li>Veggies: <span>2</span> / <span>6-8</span> - missed target by significant</li>
+                            <li>Carbs: <span>8</span> / <span>6</span> - missed target by 2</li>
+                            <li>Fats: <span>5</span> / <span>7</span> - missed target by 2 (but under, so ok for fats)</li>
+                        </ul>
+                    <li>Friday: IN PROGRESS</li>
+                    <li>Saturday: TBD</li>
+                    <li>Sunday: TBD</li>
+                </ul>
                 <h3>Current Day Stats</h3>
                 <p>Exceed: 2 Meals</p>
                 <p>Met: 2 Meals</p>
                 <p>Failed: 1 Meals</p>
+                <p>Friday, Jan. 1, 20XX</p>
+                <p>Current Progress:</p>
+                <ul>
+                    <li>Protein: <span id="dailyProteinTotal">--</span> / <span id="dailyProteinTarget">--</span></li>
+                    <li>Veggies: <span>--</span> / <span>--</span></li>
+                    <li>Carbs: <span>--</span> / <span>--</span></li>
+                    <li>Fats: <span>XX</span> / <span>7</span></li>
+                </ul>
+                <p>Meals Logged Today:</p>
+                <ul>
+                    <li>Entry 1 - ID: XXXX - : XX P, XX V, XX, C, XX F - Auto Summary: Good meal. Stay consistent!</li>
+                    <li>Entry 2 - ID: XXXX - : XX P, XX V, XX, C, XX F - Auto Summary: Good meal. But missing veggies. Make up the veggies in another meal today.</li>
+                    <li>Entry 3 - ID: XXXX - : XX P, XX V, XX, C, XX F - Auto Summary: Great meal. You definitely came out a head here. Even banked some buffer for maybe some dessert tonight!</li>
+                </ul>
+                <p>Recommended average meal breakdown to hit daily goals:</p>
+                <p>1-2P, 1-2V, 1-2C, 1 or 2 F [HARD CODE]</p>
+
+                <!-- Not sure about this status atm -->
+                <p>Current progress and recommendations for rest of the day:</p>
+                <ul>
+                    <li id="dailyProteinStatus">Loading...</li>
+                    <li id="dailyVegetableStatus">Loading...</li>
+                    <li id="dailyCarbStatus">Loading...</li>
+                    <li id="dailyFatStatus">Loading...</li>
+                </ul>
+
             </section>
 
             <section class="entries-section">

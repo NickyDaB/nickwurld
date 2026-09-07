@@ -14,6 +14,15 @@ let currentUser = null;
 let editingMealId = null;
 let entries = [];
 
+// Temporary daily goals.
+// Eventually these can come from the database/user settings.
+const dailyGoals = {
+  protein: 6,
+  veggies: 6,
+  carbs: 6,
+  fats: 6
+};
+
 // ========================================
 // Cached DOM Elements
 // ========================================
@@ -82,6 +91,39 @@ async function apiFetch(url, options = {}) {
   }
 
   return data;
+}
+
+function calculateTodayTotals() {
+
+  const totals = {
+    protein: 0,
+    veggies: 0,
+    carbs: 0,
+    fats: 0
+  };
+
+  const timezone = currentUser?.timezone || "UTC";
+
+  const today = new Date().toLocaleDateString("en-CA", {
+    timeZone: timezone
+  });
+
+  entries.forEach((entry) => {
+
+    const mealDate = new Date(entry.created_at).toLocaleDateString("en-CA", {
+      timeZone: timezone
+    });
+
+    if (mealDate === today) {
+      totals.protein += Number(entry.protein);
+      totals.veggies += Number(entry.veggies);
+      totals.carbs += Number(entry.carbs);
+      totals.fats += Number(entry.fats);
+    }
+
+  });
+
+  return totals;
 }
 
 async function createMeal(){
@@ -217,14 +259,38 @@ async function loadEntries() {
   try {
     const url = `${API_BASE}/meals.php?user_id=${currentUser.id}`;
 
-    // Debug logs
-    // TODO: Review and remove? - 06/05/26
-    // console.log("Loading meals from:", url);
+    console.debug("Loading meals from:", url);
 
     entries = await apiFetch(url);
 
-    //console.log("Entries returned from API:", entries);
-    //console.log("Is entries an array?", Array.isArray(entries));
+    console.debug("Entries returned from API:", entries);
+    console.debug("Is entries an array?", Array.isArray(entries));
+
+    //temp goal stuff
+    const todayTotals = calculateTodayTotals();
+
+    console.debug("Daily Goals:", dailyGoals);
+    console.debug("Today's Totals:", todayTotals);
+
+    //update display
+    document.getElementById("dailyProteinGoal").textContent = dailyGoals.protein;
+    document.getElementById("dailyProteinTotal").textContent = todayTotals.protein;
+    document.getElementById("dailyProteinTarget").textContent = dailyGoals.protein;
+
+    const proteinStatus = document.getElementById("dailyProteinStatus");
+
+    if(todayTotals.protein >= dailyGoals.protein)
+    {
+      console.debug("daily protein goal met!");
+      proteinStatus.textContent = "Daily protein goal met!";
+    }else if(todayTotals.protein < dailyGoals.protein){
+      console.debug("daily protein goals not yet met today. Eat more protein!");
+      proteinStatus.textContent = "Daily protein goal not yet met. Eat more protein!";
+    }else{
+      console.debug("I have no idea how we got here. This condition should not have been met! :P");
+    }
+
+
 
     renderEntries();
   } catch (error) {
