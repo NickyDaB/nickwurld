@@ -331,11 +331,6 @@ function renderEntries() {
         </div>
 
         <div>
-          <h4>Notes</h4>
-          <p class="meal-notes">${escapeHtml(entry.notes)}</p>
-        </div>
-
-        <div>
           <h4>Macros</h4>
           <div class="meal-stats">
             <span><strong>Protein:</strong> ${entry.protein}</span>
@@ -343,6 +338,11 @@ function renderEntries() {
             <span><strong>Carbs:</strong> ${entry.carbs}</span>
             <span><strong>Fats:</strong> ${entry.fats}</span>
           </div>
+        </div>
+
+        <div class="meal-notes-area">
+          <h4>Notes</h4>
+          <p class="meal-notes">${escapeHtml(entry.notes)}</p>
         </div>
 
         <button class="edit-button" data-id="${entry.id}">Edit</button>
