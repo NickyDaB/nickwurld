@@ -249,6 +249,24 @@ function formatMealDate(utcTimestamp) {
   }).format(new Date(utcTimestamp));
 }
 
+//find all the meals from today's date
+//used to display info on index page
+function getTodaysEntries() {
+  const timezone = currentUser?.timezone || "UTC";
+
+  const today = new Date().toLocaleDateString("en-CA", {
+    timeZone: timezone
+  });
+
+  return entries.filter((entry) => {
+    const mealDate = new Date(entry.created_at).toLocaleDateString("en-CA", {
+      timeZone: timezone
+    });
+
+    return mealDate === today;
+  });
+}
+
 // Load meals for the active user.
 // cacheBust prevents the browser from reusing stale API responses.
 async function loadEntries() {
@@ -305,6 +323,7 @@ async function loadEntries() {
 
 
     renderEntries();
+    renderTodaysEntries();
   } catch (error) {
     console.error("loadEntries failed:", error);
     setStatus(`Could not load meals: ${error.message}`, true);
@@ -429,6 +448,43 @@ function renderEntries() {
     `;
 
     mealEntries.appendChild(card);
+  });
+}
+
+/*
+This function:
+- Gets only today's meals.
+- Clears the previous display.
+- Handles the case where no meals have been logged.
+- Displays each meal's macros and database ID.
+*/
+function renderTodaysEntries() {
+  const todaysEntries = getTodaysEntries();
+  const todaysList = document.getElementById("mealsLoggedToday");
+
+  todaysList.innerHTML = "";
+
+  if (todaysEntries.length === 0) {
+    const item = document.createElement("li");
+    item.textContent = "No meals logged today.";
+    todaysList.appendChild(item);
+    return;
+  }
+
+  //We're using todaysEntries.length - index (aka - index + 1) for the meal's display number, 
+  // so gaps in database IDs won't affect the numbering. 
+  // for example if an entry gets deleted or edited
+  //leaving out the Auto Summary for now. That's a future feature involving meal evaluation rules.
+  todaysEntries.forEach((entry, index) => {
+    const item = document.createElement("li");
+
+    item.textContent =
+      `Meal ${todaysEntries.length - index} - ID: ${entry.id} - ` +
+      `${entry.protein}P, ${entry.veggies}V, ` +
+      `${entry.carbs}C, ${entry.fats}F ` +
+      `- Auto Summary: [INSERT AUTO SUMMARY HERE]`;
+
+    todaysList.appendChild(item);
   });
 }
 
