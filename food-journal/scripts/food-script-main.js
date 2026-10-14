@@ -273,9 +273,21 @@ async function loadEntries() {
     console.debug("Today's Totals:", todayTotals);
 
     //update display
+    //Top area 
     document.getElementById("dailyProteinGoal").textContent = dailyGoals.protein;
+    //day stats area
+    // Protein
     document.getElementById("dailyProteinTotal").textContent = todayTotals.protein;
     document.getElementById("dailyProteinTarget").textContent = dailyGoals.protein;
+    // Veggies
+    document.getElementById("dailyVeggiesTotal").textContent = todayTotals.veggies;
+    document.getElementById("dailyVeggiesTarget").textContent = dailyGoals.veggies;
+    // Carbs
+    document.getElementById("dailyCarbsTotal").textContent = todayTotals.carbs;
+    document.getElementById("dailyCarbsTarget").textContent = dailyGoals.carbs;
+    // Fats
+    document.getElementById("dailyFatsTotal").textContent = todayTotals.fats;
+    document.getElementById("dailyFatsTarget").textContent = dailyGoals.fats;
 
     const proteinStatus = document.getElementById("dailyProteinStatus");
 
