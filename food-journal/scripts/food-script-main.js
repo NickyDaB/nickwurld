@@ -129,6 +129,77 @@ function calculateTodayTotals() {
   return totals;
 }
 
+function calculateWeeklyTotals() {
+  const timezone = currentUser?.timezone || "UTC";
+
+  const weekdays = [
+    "sunday", "monday", "tuesday", "wednesday",
+    "thursday", "friday", "saturday"
+  ];
+
+  const totals = {};
+
+  // Find today's calendar date in the user's timezone.
+  const todayString = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+
+  const [year, month, day] = todayString.split("-").map(Number);
+  const today = new Date(Date.UTC(year, month - 1, day));
+
+  // Find Monday of the current week.
+  const daysSinceMonday = (today.getUTCDay() + 6) % 7;
+  const monday = new Date(today);
+  monday.setUTCDate(today.getUTCDate() - daysSinceMonday);
+
+  // Initialize seven days with zero totals.
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(monday);
+    date.setUTCDate(monday.getUTCDate() + i);
+
+    const weekday = weekdays[date.getUTCDay()];
+    const dateKey = date.toISOString().slice(0, 10);
+
+    totals[dateKey] = {
+      weekday,
+      protein: 0,
+      veggies: 0,
+      carbs: 0,
+      fats: 0
+    };
+  }
+
+  // Add each meal to its corresponding calendar day.
+  entries.forEach((entry) => {
+    const mealDate = new Date(entry.created_at);
+
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).formatToParts(mealDate);
+
+    const getPart = (type) =>
+      parts.find((part) => part.type === type).value;
+
+    const dateKey =
+      `${getPart("year")}-${getPart("month")}-${getPart("day")}`;
+
+    if (totals[dateKey]) {
+      totals[dateKey].protein += Number(entry.protein);
+      totals[dateKey].veggies += Number(entry.veggies);
+      totals[dateKey].carbs += Number(entry.carbs);
+      totals[dateKey].fats += Number(entry.fats);
+    }
+  });
+
+  return totals;
+}
+
 async function createMeal(){
   const photoInput = document.getElementById("mealPhoto");
   const file = photoInput.files[0];
@@ -324,10 +395,12 @@ async function loadEntries() {
     }
 
 
-
+    //TODO : Eventually move all this "rendering" to another helper function. 
+    // logically it doesn't belong in this function called "load entries"
     renderEntries();
     renderTodaysEntries();
     renderWeeklyDates();
+    renderWeeklyTotals();
   } catch (error) {
     console.error("loadEntries failed:", error);
     setStatus(`Could not load meals: ${error.message}`, true);
@@ -528,6 +601,24 @@ function renderWeeklyDates() {
         day: "numeric",
         year: "numeric"
       }).format(date);
+  });
+}
+
+function renderWeeklyTotals() {
+  const weeklyTotals = calculateWeeklyTotals();
+
+  Object.values(weeklyTotals).forEach((day) => {
+    const weekday = day.weekday;
+
+    ["protein", "veggies", "carbs", "fats"].forEach((macro) => {
+      document.getElementById(
+        `weekly_stats_${weekday}_${macro}_recorded`
+      ).textContent = day[macro];
+
+      document.getElementById(
+        `weekly_stats_${weekday}_${macro}_goal`
+      ).textContent = dailyGoals[macro];
+    });
   });
 }
 
