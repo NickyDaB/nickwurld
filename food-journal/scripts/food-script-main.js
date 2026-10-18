@@ -327,6 +327,7 @@ async function loadEntries() {
 
     renderEntries();
     renderTodaysEntries();
+    renderWeeklyDates();
   } catch (error) {
     console.error("loadEntries failed:", error);
     setStatus(`Could not load meals: ${error.message}`, true);
@@ -488,6 +489,45 @@ function renderTodaysEntries() {
       `- Auto Summary: [INSERT AUTO SUMMARY HERE]`;
 
     todaysList.appendChild(item);
+  });
+}
+
+function renderWeeklyDates() {
+  const timezone = currentUser?.timezone || "UTC";
+
+  const todayString = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+
+  // Construct a calendar date without depending on the browser's timezone.
+  const [year, month, day] = todayString.split("-").map(Number);
+  const today = new Date(Date.UTC(year, month - 1, day));
+
+  // Convert JavaScript's Sunday=0 convention into Monday=0.
+  const daysSinceMonday = (today.getUTCDay() + 6) % 7;
+
+  const monday = new Date(today);
+  monday.setUTCDate(today.getUTCDate() - daysSinceMonday);
+
+  const weekdays = [
+    "monday", "tuesday", "wednesday", "thursday",
+    "friday", "saturday", "sunday"
+  ];
+
+  weekdays.forEach((weekday, index) => {
+    const date = new Date(monday);
+    date.setUTCDate(monday.getUTCDate() + index);
+
+    document.getElementById(`weekly_stats_date_${weekday}`).textContent =
+      new Intl.DateTimeFormat("en-US", {
+        timeZone: "UTC",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      }).format(date);
   });
 }
 
