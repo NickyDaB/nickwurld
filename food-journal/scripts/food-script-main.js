@@ -77,6 +77,9 @@ function indexInit() {
   loginStatus = document.getElementById("loginStatus");
 
   setUpListeners();
+
+  //set up initial display an UI
+  updateUserGoalStats();
 }
 
 // Shared wrapper for API requests.
@@ -607,4 +610,38 @@ async function updateMeal(entryId){
     saveMealButton.disabled = false;
     saveMealButton.textContent = "Save Changes";
   }
+}
+
+/**
+ * Summary: Update all the user goal variables in the statistics area (top) of the page.
+ */
+function updateUserGoalStats(){
+  //update display
+
+  //IDK, re check this stuff starting here -- 
+  //Top area 
+  document.getElementById("dailyProteinGoal").textContent = dailyGoals.protein;
+  //day stats area
+  // Protein
+  document.getElementById("dailyProteinTarget").textContent = dailyGoals.protein;
+  // Veggies
+  document.getElementById("dailyVeggiesTarget").textContent = dailyGoals.veggies;
+  // Carbs
+  document.getElementById("dailyCarbsTarget").textContent = dailyGoals.carbs;
+  // Fats
+  document.getElementById("dailyFatsTarget").textContent = dailyGoals.fats;
+  //IDK, re check this stuff ending here -- 
+
+  //Stats - current week stats - dynamic code
+  // monday
+  document.getElementById("weekly_stats_monday_protein_goal").textContent = dailyGoals.protein;
+  document.getElementById("weekly_stats_monday_veggies_goal").textContent = dailyGoals.veggies;
+  document.getElementById("weekly_stats_monday_carbs_goal").textContent = dailyGoals.carbs;
+  document.getElementById("weekly_stats_monday_fats_goal").textContent = dailyGoals.fats;
+  // tuesday
+  document.getElementById("weekly_stats_tuesday_protein_goal").textContent = dailyGoals.protein;
+  document.getElementById("weekly_stats_tuesday_veggies_goal").textContent = dailyGoals.veggies;
+  document.getElementById("weekly_stats_tuesday_carbs_goal").textContent = dailyGoals.carbs;
+  document.getElementById("weekly_stats_tuesday_fats_goal").textContent = dailyGoals.fats;
+
 }
